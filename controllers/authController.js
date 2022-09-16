@@ -1,0 +1,129 @@
+var express = require("express");
+var router = express.Router();
+
+const { body, validationResult } = require("express-validator");
+const bcrypt = require("bcryptjs");
+const passport = require("passport");
+const jwt = require("jsonwebtoken");
+
+const User = require("../models/user");
+
+router.post("/signup", [
+  // Validate and sanitize fields.
+  body("first_name", "Please do not leave first name empty.")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .escape(),
+  body("last_name", "Please do not leave last name empty.")
+    .trim()
+    .isLength({ min: 1, max: 100 })
+    .escape(),
+  body("email", "Please enter a valid email address.")
+    .trim()
+    .isEmail()
+    .escape(),
+  body("password", "Please use a password with over 6 characters.")
+    .trim()
+    .isLength({ min: 6, max: 100 })
+    .escape(),
+  body(
+    "password_confirmation",
+    "Password confirmation must match the original password"
+  )
+    .exists()
+    .custom((value, { req }) => value === req.body.password),
+
+  (req, res, next) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    bcrypt.hash(req.body.password, 10, (err, hashedPassword) => {
+      // if err, do something
+      if (err) {
+        return next(err);
+      }
+      // otherwise, store hashedPassword in DB
+      const user = new User({
+        first_name: req.body.first_name,
+        last_name: req.body.last_name,
+        email: req.body.email,
+        password: hashedPassword,
+        profile_pic_url: "",
+        posts: [],
+        friends: [],
+        friend_requests: [],
+      });
+      if (!errors.isEmpty()) {
+        res.status(422).json({ errors: errors.mapped() });
+        return;
+      }
+      user.save((err) => {
+        if (err) {
+          return res.status(500).json({ error: err.message });
+        }
+        return res.status(201).json({
+          message: "Sign up successful, please login.",
+        });
+      });
+    });
+  },
+]);
+
+router.post(
+  "/login",
+  body("username", "Invalid username").trim().isEmail().escape(),
+  body("password", "Invalid password")
+    .trim()
+    .isLength({ min: 6, max: 100 })
+    .escape(),
+  (req, res) => {
+    // Extract the validation errors from a request.
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      res.status(422).json({ errors: errors.mapped() });
+      return;
+    }
+
+    passport.authenticate("local", { session: false }, (err, user, info) => {
+      if (err) {
+        res.status(404).json(err);
+        return;
+      }
+      if (user) {
+        jwt.sign(
+          { _id: user._id },
+          process.env.JWT_SECRET_KEY,
+          (err, token) => {
+            if (err) {
+              res.status(500).json(err);
+            }
+            res.status(200).json({
+              message: "Log in successful",
+              token: "Bearer " + token,
+            });
+          }
+        );
+      } else {
+        res.status(401).json(info);
+      }
+    })(req, res);
+  }
+);
+
+router.get("/facebook", (req, res, next) => {
+  passport.authenticate("facebook", { session: false }, (err, user, info) => {
+    if (err) return next(err);
+    jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
+      if (err) {
+        res.status(500).json(err);
+      }
+      res.status(200).json({
+        message: "Log in successful",
+        token: "Bearer " + token,
+      });
+    });
+  })(req, res, next);
+});
+
+module.exports = router;
