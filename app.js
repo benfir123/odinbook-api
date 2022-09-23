@@ -20,6 +20,7 @@ app.use(
   cors({
     origin: "https://benfir123.github.io",
     credentials: true,
+    allowedHeaders: ["Content-Type", "Authorization"],
   })
 );
 app.use(logger("dev"));
