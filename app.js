@@ -17,7 +17,7 @@ require("./utils/mongoConfig");
 
 app.use(
   cors({
-    origin: "http://localhost:3001",
+    origin: "http://benfir123.github.io/odinbook-client",
     credentials: true,
   })
 );
