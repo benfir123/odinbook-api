@@ -15,6 +15,7 @@ require("./utils/passportConfig");
 
 require("./utils/mongoConfig");
 
+app.options("*", cors());
 app.use(
   cors({
     origin: "https://benfir123.github.io",
