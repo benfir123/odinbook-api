@@ -15,6 +15,9 @@ require("./utils/passportConfig");
 
 require("./utils/mongoConfig");
 
+app.options("*", cors());
+app.use(cors());
+
 app.use(function (req, res, next) {
   res.header("Access-Control-Allow-Origin", "https://benfir123.github.io"); // update to match the domain you will make the request from
   res.header(
@@ -24,8 +27,6 @@ app.use(function (req, res, next) {
   next();
 });
 
-app.options("*", cors());
-app.use(cors());
 app.use(logger("dev"));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
