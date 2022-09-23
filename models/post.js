@@ -11,6 +11,8 @@ const PostSchema = new Schema({
   likes: [{ type: Schema.Types.ObjectId, ref: "User" }],
   comments: [{ type: Schema.Types.ObjectId, ref: "Comment" }],
 });
+PostSchema.set("toObject", { virtuals: true });
+PostSchema.set("toJSON", { virtuals: true });
 
 PostSchema.virtual("added_formatted").get(function () {
   return DateTime.fromJSDate(this.added).toLocaleString(DateTime.DATE_MED);

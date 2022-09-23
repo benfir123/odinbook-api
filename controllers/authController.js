@@ -7,6 +7,7 @@ const passport = require("passport");
 const jwt = require("jsonwebtoken");
 
 const User = require("../models/user");
+const setupTestDrive = require("../setupTestDrive");
 
 router.post("/signup", [
   // Validate and sanitize fields.
@@ -76,8 +77,8 @@ router.post(
     .trim()
     .isLength({ min: 6, max: 100 })
     .escape(),
-  (req, res) => {
-    // Extract the validation errors from a request.
+  (req, res, next) => {
+    // Extract the validation errors from request.
     const errors = validationResult(req);
 
     if (!errors.isEmpty()) {
@@ -101,15 +102,49 @@ router.post(
             res.status(200).json({
               message: "Log in successful",
               token: "Bearer " + token,
+              user: {
+                first_name: user.first_name,
+                last_name: user.last_name,
+                full_name: user.full_name,
+                email: user.email,
+                id: user.id,
+                _id: user._id,
+                profile_pic_url: user.profile_pic_url
+                  ? user.profile_pic_url
+                  : "",
+              },
             });
           }
         );
       } else {
         res.status(401).json(info);
       }
-    })(req, res);
+    })(req, res, next);
   }
 );
+
+router.post("/testdrive", async (req, res, next) => {
+  const user = await setupTestDrive();
+
+  jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
+    if (err) {
+      res.status(500).json(err);
+    }
+    res.status(201).json({
+      message: "Log in successful",
+      token: "Bearer " + token,
+      user: {
+        first_name: user.first_name,
+        last_name: user.last_name,
+        full_name: user.full_name,
+        email: user.email,
+        id: user.id,
+        _id: user._id,
+        profile_pic_url: user.profile_pic_url ? user.profile_pic_url : "",
+      },
+    });
+  });
+});
 
 router.get("/facebook", (req, res, next) => {
   passport.authenticate("facebook", { session: false }, (err, user, info) => {
@@ -121,6 +156,15 @@ router.get("/facebook", (req, res, next) => {
       res.status(200).json({
         message: "Log in successful",
         token: "Bearer " + token,
+        user: {
+          first_name: user.first_name,
+          last_name: user.last_name,
+          full_name: user.full_name,
+          email: user.email,
+          id: user.id,
+          _id: user._id,
+          profile_pic_url: user.profile_pic_url ? user.profile_pic_url : "",
+        },
       });
     });
   })(req, res, next);

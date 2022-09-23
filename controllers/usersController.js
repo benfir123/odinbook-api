@@ -4,8 +4,6 @@ var router = express.Router();
 const { body, validationResult } = require("express-validator");
 
 var User = require("../models/user");
-var Post = require("../models/post");
-var Comment = require("../models/comment");
 
 var multer = require("multer");
 var path = require("path");
@@ -25,6 +23,16 @@ router.get("/", async (req, res) => {
   try {
     const users = await User.find({});
     res.status(200).json({ users });
+  } catch (err) {
+    return res.status(500).json({ error: err.message });
+  }
+});
+
+router.get("/info", (req, res) => {
+  try {
+    res.status(200).json({
+      user: req.user,
+    });
   } catch (err) {
     return res.status(500).json({ error: err.message });
   }
@@ -56,7 +64,7 @@ router.put(
         req.file.mimetype === "image/tiff" ||
         req.file.mimetype === "image/webp"
       ) {
-        return "image"; // return "non-falsy" value to indicate valid data"
+        return "image"; // return "non-falsy" value to indicate valid data
       } else {
         return false; // return "falsy" value to indicate invalid data
       }

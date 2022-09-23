@@ -8,12 +8,12 @@ router.post("/req", async function (req, res) {
   try {
     const targetUser = await User.findById(targetUserId);
 
-    // check requesting user is not the same as the targetevant user
+    // check requesting user is not the same as the target user
     if (targetUser.id == req.user.id) {
       return res.status(400).json({ message: "You cannot friend yourself" });
     }
 
-    // check that the requesting user is not already a friend of the targetevant user
+    // check that the requesting user is not already a friend of the target user
     if (targetUser.friends.includes(req.user._id)) {
       return res
         .status(400)
@@ -26,7 +26,7 @@ router.post("/req", async function (req, res) {
         message: "You have already sent a friend request to this user",
       });
     }
-    // push the requesting user's id to the targetevant user's friendRequests array
+    // push the requesting user's id to the target user's friendRequests array
     const updatedFriendReqs = [...targetUser.friend_requests, req.user._id];
     targetUser.friend_requests = updatedFriendReqs;
     const updatedUser = await targetUser.save();
@@ -47,14 +47,14 @@ router.delete(
     try {
       const targetUser = await User.findById(targetUserId);
 
-      // check canceling user is not the same as the targetevant user
+      // check canceling user is not the same as the target user
       if (!targetUser.friend_requests.includes(req.user._id)) {
         return res.status(404).json({ message: "Friend request not found." });
       }
 
       // delete the request
       const updatedRequests = targetUser.friend_requests.filter(
-        (user) => user != req.user._id
+        (user) => user != req.user.id
       );
       targetUser.friend_requests = updatedRequests;
       const updatedUser = await targetUser.save();
@@ -77,7 +77,7 @@ router.put(
     try {
       const targetUser = await User.findById(targetUserId);
 
-      // check that accepting user has a friend request from targetevant user
+      // check that accepting user has a friend request from target user
       if (!req.user.friend_requests.includes(targetUserId)) {
         return res.status(400).json({
           message: "Friend request not found",

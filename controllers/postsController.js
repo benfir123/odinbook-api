@@ -87,7 +87,7 @@ router.post("/", [
         req.file.mimetype === "image/tiff" ||
         req.file.mimetype === "image/webp"
       ) {
-        return "image"; // return "non-falsy" value to indicate valid data"
+        return "image"; // return "non-falsy" value to indicate valid data
       } else {
         return false; // return "falsy" value to indicate invalid data
       }
@@ -101,9 +101,9 @@ router.post("/", [
     if (!result.isEmpty()) {
       return res.status(400).json({ errors: result.mapped() });
     }
-    if (!req.file) {
-      return res.json({ message: "No file attached" });
-    }
+    // if (!req.file) {
+    //   return res.json({ message: "No file attached" });
+    // }
     try {
       const newPost = new Post({
         author: req.user.id,

@@ -11,6 +11,9 @@ const CommentSchema = new Schema({
   post: { type: Schema.Types.ObjectId, ref: "Post" },
 });
 
+CommentSchema.set("toObject", { virtuals: true });
+CommentSchema.set("toJSON", { virtuals: true });
+
 CommentSchema.virtual("added_formatted").get(function () {
   return DateTime.fromJSDate(this.added).toLocaleString(DateTime.DATE_MED);
 });
