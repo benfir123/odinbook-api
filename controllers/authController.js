@@ -146,9 +146,7 @@ router.post("/testdrive", async (req, res, next) => {
   });
 });
 
-router.get("/facebook", (req, res, next) => {
-  passport.authenticate("facebook", { session: false });
-});
+router.get("/facebook", passport.authenticate("facebook", { session: false }));
 
 router.get(
   "/facebook/callback",
