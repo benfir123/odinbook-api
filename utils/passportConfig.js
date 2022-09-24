@@ -65,7 +65,8 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL: "https://odinbook-ben.herokuapp.com/auth/facebook/callback",
+      callbackURL:
+        "https://odinbook-ben.herokuapp.com/api/auth/facebook/callback",
       fbGraphVersion: "v3.0",
     },
     function (accessToken, refreshToken, profile, done) {
