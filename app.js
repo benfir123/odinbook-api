@@ -1,11 +1,10 @@
 require("dotenv").config();
-
+var cors = require("cors");
 var createError = require("http-errors");
 var express = require("express");
 var path = require("path");
 var cookieParser = require("cookie-parser");
 var logger = require("morgan");
-const cors = require("cors");
 
 var indexRouter = require("./routes/index");
 
@@ -15,17 +14,11 @@ require("./utils/passportConfig");
 
 require("./utils/mongoConfig");
 
-app.options("*", cors());
-app.use(cors());
-
-app.use(function (req, res, next) {
-  res.header("Access-Control-Allow-Origin", "https://benfir123.github.io"); // update to match the domain you will make the request from
-  res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
-  );
-  next();
-});
+app.use(
+  cors({
+    origin: "https://benfir123.github.io",
+  })
+);
 
 app.use(logger("dev"));
 app.use(express.json());
@@ -34,6 +27,10 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "public")));
 
 app.use("/api", indexRouter);
+
+app.get("/", (req, res) => {
+  res.send("App is currently running");
+});
 
 // catch 404 and forward to error handler
 app.use(function (req, res, next) {
