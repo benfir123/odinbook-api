@@ -147,7 +147,13 @@ router.post("/testdrive", async (req, res, next) => {
 });
 
 router.get("/facebook", (req, res, next) => {
-  passport.authenticate("facebook", { session: false }, (err, user, info) => {
+  passport.authenticate("facebook", { session: false });
+});
+
+router.get(
+  "/facebook/callback",
+  passport.authenticate("facebook"),
+  (err, user, info) => {
     if (err) return next(err);
     jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
       if (err) {
@@ -167,7 +173,7 @@ router.get("/facebook", (req, res, next) => {
         },
       });
     });
-  })(req, res, next);
-});
+  }
+);
 
 module.exports = router;
