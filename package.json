@@ -19,7 +19,7 @@
     "dotenv": "^16.0.2",
     "express": "~4.16.1",
     "express-validator": "^6.14.2",
-    "faker": "^6.6.6",
+    "faker": "^5.5.3",
     "http-errors": "~1.6.3",
     "jsonwebtoken": "^8.5.1",
     "luxon": "^3.0.3",
