@@ -3,7 +3,7 @@ require("dotenv").config();
 const passport = require("passport");
 
 const LocalStrategy = require("passport-local").Strategy;
-const FacebookStrategy = require("passport-facebook");
+const FacebookTokenStrategy = require("passport-facebook-token");
 const passportJWT = require("passport-jwt");
 const JwtStrategy = passportJWT.Strategy;
 const ExtractJwt = passportJWT.ExtractJwt;
@@ -59,14 +59,12 @@ passport.use(
   )
 );
 
-//passport js's Facebook strategy function
+//passport js's Facebook Token strategy function
 passport.use(
-  new FacebookStrategy(
+  new FacebookTokenStrategy(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      callbackURL:
-        "https://odinbook-ben.herokuapp.com/api/auth/facebook/callback",
       fbGraphVersion: "v3.0",
     },
     function (accessToken, refreshToken, profile, done) {
@@ -76,7 +74,7 @@ passport.use(
           first_name: profile._json.first_name,
           last_name: profile._json.last_name,
           email: profile._json.email,
-          profile_pic_url: profile.photos[0].value,
+          profilePicUrl: profile.photos[0].value,
         },
         function (error, user) {
           return done(error, user);
@@ -85,3 +83,13 @@ passport.use(
     }
   )
 );
+
+passport.serializeUser(function (user, done) {
+  done(null, user._id);
+});
+
+passport.deserializeUser(function (id, done) {
+  User.findById(id, function (err, user) {
+    done(err, user);
+  });
+});
