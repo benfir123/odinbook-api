@@ -146,11 +146,20 @@ router.post("/testdrive", async (req, res, next) => {
   });
 });
 
+router.get("/facebook/login/failed", (req, res) => {
+  res.status(401).json({
+    success: false,
+    message: "failure",
+  });
+});
+
 router.get("/facebook", passport.authenticate("facebook", { session: false }));
 
 router.get(
   "/facebook/callback",
-  passport.authenticate("facebook"),
+  passport.authenticate("facebook", {
+    failureRedirect: "/facebook/login/failed",
+  }),
   function (req, res) {
     res.status(200).json({
       user: req.user,
