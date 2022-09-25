@@ -151,27 +151,32 @@ router.get("/facebook", passport.authenticate("facebook", { session: false }));
 router.get(
   "/facebook/callback",
   passport.authenticate("facebook"),
-  (err, user, info) => {
-    if (err) return next(err);
-    jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
-      if (err) {
-        res.status(500).json(err);
-      }
-      res.status(200).json({
-        message: "Log in successful",
-        token: "Bearer " + token,
-        user: {
-          first_name: user.first_name,
-          last_name: user.last_name,
-          full_name: user.full_name,
-          email: user.email,
-          id: user.id,
-          _id: user._id,
-          profile_pic_url: user.profile_pic_url ? user.profile_pic_url : "",
-        },
-      });
+  function (req, res) {
+    res.status(200).json({
+      user: req.user,
     });
   }
+  // (err, user, info) => {
+  //   if (err) return next(err);
+  //   jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
+  //     if (err) {
+  //       res.status(500).json(err);
+  //     }
+  //     res.status(200).json({
+  //       message: "Log in successful",
+  //       token: "Bearer " + token,
+  //       user: {
+  //         first_name: user.first_name,
+  //         last_name: user.last_name,
+  //         full_name: user.full_name,
+  //         email: user.email,
+  //         id: user.id,
+  //         _id: user._id,
+  //         profile_pic_url: user.profile_pic_url ? user.profile_pic_url : "",
+  //       },
+  //     });
+  //   });
+  // }
 );
 
 module.exports = router;
