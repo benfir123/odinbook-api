@@ -148,7 +148,7 @@ router.post("/testdrive", async (req, res, next) => {
 
 router.post(
   "/facebook/token",
-  passport.authenticate("facebook-token"),
+  passport.authenticate("facebook-token", { session: false }),
   (req, res) => {
     res.status(201).json({
       message: "FB Auth successful",
