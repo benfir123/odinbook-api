@@ -74,7 +74,7 @@ passport.use(
           first_name: profile._json.first_name,
           last_name: profile._json.last_name,
           email: profile._json.email,
-          profilePicUrl: profile.photos[0].value,
+          profile_pic_url: profile.photos[0].value,
         },
         function (error, user) {
           return done(error, user);
