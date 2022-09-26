@@ -157,30 +157,31 @@ router.post("/facebook", (req, res, next) => {
       last_name: last_name,
       email: email,
       profile_pic_url: picture.data.url,
-    }
-  ).exec((err, user) => {
-    if (err) {
-      return next(err);
-    }
-    jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
+    },
+    (err, user) => {
       if (err) {
-        res.status(500).json(err);
+        return next(err);
       }
-      res.status(200).json({
-        message: "Log in successful",
-        token: "Bearer " + token,
-        user: {
-          first_name: user.first_name,
-          last_name: user.last_name,
-          full_name: user.full_name,
-          email: user.email,
-          id: user.id,
-          _id: user._id,
-          profile_pic_url: user.profile_pic_url ? user.profile_pic_url : "",
-        },
+      jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
+        if (err) {
+          res.status(500).json(err);
+        }
+        res.status(200).json({
+          message: "Log in successful",
+          token: "Bearer " + token,
+          user: {
+            first_name: user.first_name,
+            last_name: user.last_name,
+            full_name: user.full_name,
+            email: user.email,
+            id: user.id,
+            _id: user._id,
+            profile_pic_url: user.profile_pic_url ? user.profile_pic_url : "",
+          },
+        });
       });
-    });
-  });
+    }
+  );
 
   // message: "FB Auth successful",
   // user: {
