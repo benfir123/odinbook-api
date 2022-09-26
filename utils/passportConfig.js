@@ -65,7 +65,6 @@ passport.use(
     {
       clientID: process.env.FACEBOOK_APP_ID,
       clientSecret: process.env.FACEBOOK_APP_SECRET,
-      fbGraphVersion: "v15.0",
     },
     function (accessToken, refreshToken, profile, done) {
       User.findOrCreate(
