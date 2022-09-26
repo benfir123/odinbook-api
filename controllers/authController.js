@@ -146,26 +146,55 @@ router.post("/testdrive", async (req, res, next) => {
   });
 });
 
-router.post(
-  "/facebook/token",
-  passport.authenticate("facebook-token"),
-  (req, res) => {
-    res.status(201).json({
-      message: "FB Auth successful",
-      user: {
-        first_name: req.user.first_name,
-        last_name: req.user.last_name,
-        full_name: req.user.full_name,
-        email: req.user.email,
-        id: req.user.id,
-        _id: req.user._id,
-        profile_pic_url: req.user.profile_pic_url
-          ? req.user.profile_pic_url
-          : "",
-        facebookId: req.user.facebookId,
-      },
+router.post("/facebook", (req, res, next) => {
+  const { responseObj } = req.body;
+  const { email, id, first_name, last_name, picture } = responseObj;
+
+  User.findOrCreate(
+    { facebookId: id },
+    {
+      first_name: first_name,
+      last_name: last_name,
+      email: email,
+      profile_pic_url: picture.data.url,
+    }
+  ).exec((err, user) => {
+    if (err) {
+      return next(err);
+    }
+    jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY, (err, token) => {
+      if (err) {
+        res.status(500).json(err);
+      }
+      res.status(200).json({
+        message: "Log in successful",
+        token: "Bearer " + token,
+        user: {
+          first_name: user.first_name,
+          last_name: user.last_name,
+          full_name: user.full_name,
+          email: user.email,
+          id: user.id,
+          _id: user._id,
+          profile_pic_url: user.profile_pic_url ? user.profile_pic_url : "",
+        },
+      });
     });
-  }
-);
+  });
+
+  // message: "FB Auth successful",
+  // user: {
+  //   first_name: req.user.first_name,
+  //   last_name: req.user.last_name,
+  //   full_name: req.user.full_name,
+  //   email: req.user.email,
+  //   id: req.user.id,
+  //   _id: req.user._id,
+  //   profile_pic_url: req.user.profile_pic_url
+  //     ? req.user.profile_pic_url
+  //     : "",
+  //   facebookId: req.user.facebookId,
+  // },
+});
 
 module.exports = router;

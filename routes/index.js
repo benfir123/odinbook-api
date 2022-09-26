@@ -10,18 +10,18 @@ var postsRouter = require("../controllers/postsController");
 router.use("/auth", authRouter);
 router.use(
   "/users",
-  passport.authenticate(["jwt", "facebook-token"], { session: false }),
+  passport.authenticate("jwt", { session: false }),
   usersRouter
 );
 router.use(
   "/friends",
-  passport.authenticate(["jwt", "facebook-token"], { session: false }),
+  passport.authenticate("jwt", { session: false }),
   friendsRouter
 );
 
 router.use(
   "/posts",
-  passport.authenticate(["jwt", "facebook-token"], { session: false }),
+  passport.authenticate("jwt", { session: false }),
   postsRouter
 );
 
