@@ -6,6 +6,9 @@ Odinbook is a social media clone done as the final deliverable for the popular f
 
 [Client repository](https://github.com/benfir123/odinbook-client)
 
+## Base URL
+* The base URL is: https://odinbook-ben.herokuapp.com
+
 ## Endpoints
 
 ### Users
