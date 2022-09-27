@@ -12,49 +12,48 @@ Odinbook is a social media clone done as the final deliverable for the popular f
 
 | Description                 | Method | URL                           |
 | --------------------------- | ------ | ----------------------------- |
-| Signup                      | POST   | /api/auth/signup.             |
-| Login                       | POST   | /api/users/login              |
-| Logout from current session | POST   | /api/users/logout             |
-| Logout from all sessions    | POST   | /api/users/logout/all         |
-| Get current user data       | GET    | /api/users                    |
-| Get other user profile      | GET    | /api/users/:id                |
-| Search users                | GET    | /api/users/search             |
-| Edit own profile            | PATCH  | /api/users                    |
-| Request friend              | PATCH  | /api/users/:id/friend/request |
-| Accept friend               | PATCH  | /api/users/:id/friend/accept  |
-| Reject friend               | PATCH  | /api/users/:id/friend/reject  |
-| Remove friend               | PATCH  | /api/users/:id/friend/remove  |
+| Signup                      | POST   | /api/auth/signup              |
+| Login                       | POST   | /api/auth/login               |
+| Login as guest              | POST   | /api/auth/testdrive           |
+| Login with Facebook         | POST   | /api/auth/facebook            |
+| Get all users               | GET    | /api/users                    |
+| Get own user profile        | GET    | /api/users/info               |
+| Get one user profile        | GET    | /api/users/:userId            |
+
+### Friends
+
+| Description                 | Method | URL                           |
+| --------------------------- | ------ | ----------------------------- |
+| Request friend              | POST   | /api/friends/req              |
+| Reject friend               | DELETE | /api/friends/cancel           |
+| Accept friend               | PUT    | /api/friends/accept           |
 
 ### Posts
 
 | Description       | Method | URL                         |
 | ----------------- | ------ | --------------------------- |
 | Create post       | POST   | /api/posts                  |
-| Get own feed      | GET    | /api/posts/feed             |
-| Get user timeline | GET    | /api/posts/timeline/:userId |
-| Like post         | PATCH  | /api/posts/:id/like         |
-| Unlike post       | PATCH  | /api/posts/:id/unlike       |
+| Get own feed      | GET    | /api/posts                  |
+| Get one post      | GET    | /api/posts/:id              |
+| Like/unlike post  | PUT    | /api/posts/:postId/like     |
 
 ### Comments
 
-| Description       | Method | URL                   |
-| ----------------- | ------ | --------------------- |
-| Create comment    | POST   | /api/comments/:postId |
-| Get post comments | GET    | /api/comments/:postId |
+| Description         | Method | URL                                         |
+| ------------------- | ------ | ------------------------------------------- |
+| Create comment      | POST   | /api/posts/:postId/comments/                |
+| Like/unlike comment | PUT    | /api/posts/:postId/comments/:commentId/like |
 
 ## Technologies used
 
-- [TypeScript](https://www.typescriptlang.org/)
 - [Node.js](https://nodejs.org/)
 - [Express](https://expressjs.com/)
 - [MongoDB](https://www.mongodb.com/)
 - [Mongoose](https://mongoosejs.com/)
 - [JWT](https://jwt.io/)
-- [zod](https://zod.dev/)
 - [supertest](https://github.com/visionmedia/supertest)
 - [mongodb-memory-server](https://github.com/nodkz/mongodb-memory-server)
-- [Postman](https://www.postman.com/)
 
 ### Authentication
 
-For users authentication I used JWT tokens which are stored on client side as cookies (accessToken & refreshToken). The access token expires every 5 minutes and is used for short term authentication. The refresh token expires every year and is used to refresh access tokens.
+Users are authenticated with JWT tokens each time they login to the service. The token is then stored in local storage and used to make all subsequent API calls until the user logs out.
